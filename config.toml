@@ -1,0 +1,9 @@
+# http server
+[server]
+port = ":8080"
+oauth = false
+
+# mongo
+[database]
+host = "mongo"
+port = ":27017"
