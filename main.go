@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"os"
 	"sync"
 
 	mgo "gopkg.in/mgo.v2"
@@ -23,10 +24,11 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	host := viper.GetString("server.host")
+	serverHost := viper.GetString("server.host")
 	port := viper.GetInt("server.port")
 	mongoConnString := viper.GetString("database.mongoConnString")
 
+	host, _ := os.Hostname()
 	logConf := xlog.Config{
 		Level: xlog.LevelInfo,
 		Fields: xlog.F{
@@ -39,7 +41,7 @@ func main() {
 
 	mongoSess, err := mgo.Dial(mongoConnString)
 	if err != nil {
-		panic(err)
+		logger.Fatalf("could not connect to MongoDB: %s", err.Error())
 	}
 	defer mongoSess.Close()
 
@@ -60,7 +62,7 @@ func main() {
 	var wg sync.WaitGroup
 
 	wg.Add(1)
-	addr := fmt.Sprintf("%s:%d", host, port)
+	addr := fmt.Sprintf("%s:%d", serverHost, port)
 	logger.Infof("team-service listening on %s (HTTP)", addr)
 	ln, err := net.Listen("tcp", addr)
 	if err != nil {
@@ -71,4 +73,6 @@ func main() {
 		http.Serve(ln, stack.Wrap(router))
 		wg.Done()
 	}()
+
+	wg.Wait()
 }
