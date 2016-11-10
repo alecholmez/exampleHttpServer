@@ -3,16 +3,16 @@ version: '2'
 services:
   http-server:
     build: .
-    image: alecholmez/http-server
+    image: alecholmez/http-server:latest
     depends_on:
       - mongo
     volumes:
       - .:/go/src/github.com/alecholmez/testHttpServer
     command: /bin/sh -c "/go/bin/govendor sync; go build -o /go/bin/main && /go/bin/main"
     expose:
-      - 8080
+      - 6060
     ports:
-      - "8080:8080"
+      - "6060:6060"
 
   mongo:
-    image: mongo
+    image: mongo:latest

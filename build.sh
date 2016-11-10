@@ -1,7 +1,7 @@
 #!/bin/bash
 
-echo "Building the http-server docker images"
-docker build -t alecholmez/http-server --force-rm .
+echo "Building the http-server binary"
+govendor sync
 
-docker pull mongo
+go install
 echo "Done"

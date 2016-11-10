@@ -28,4 +28,4 @@ CMD echo "Vendoring..." && \
     /go/bin/govendor generate +local
 #    ./autobuild.sh mongo:27017
 
-EXPOSE 8080
+EXPOSE 6060
