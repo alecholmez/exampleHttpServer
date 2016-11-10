@@ -1,6 +1,12 @@
 package main
 
-import "net/http"
+import (
+	"context"
+	"net/http"
+
+	"github.com/deciphernow/commons/middleware"
+	mgo "gopkg.in/mgo.v2"
+)
 
 // Middleware ...
 // A Middleware Wraps an existing http.Handler.
@@ -13,6 +19,10 @@ type Middleware interface {
 // as HTTP middleware. If f is a function with the appropriate signature,
 // MiddlewareFunc(f) is a Middleware that calls f.
 type MiddlewareFunc func(next http.Handler) http.Handler
+
+type key int
+
+const mongoSessKey key = iota
 
 // Wrap ...
 // Wrap calls f(next).
@@ -33,5 +43,20 @@ func Chain(ms ...Middleware) Middleware {
 			next = ms[i].Wrap(next)
 		}
 		return next
+	})
+}
+
+// WithMongo ...
+func WithMongo(sess *mgo.Session) middleware.Middleware {
+	return middleware.MiddlewareFunc(func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			reqSess := sess.Copy()
+			defer reqSess.Close()
+
+			ctx := r.Context()
+			ctx = context.WithValue(r.Context(), mongoSessKey, reqSess)
+			r = r.WithContext(ctx)
+			next.ServeHTTP(w, r)
+		})
 	})
 }
