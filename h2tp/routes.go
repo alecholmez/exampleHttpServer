@@ -15,7 +15,12 @@ type Route struct {
 type Routes []Route
 
 // RTS ...
-var routes = Routes{
+// An array for holding our defined routes
+var RTS = Routes{
 	Route{"Docs", "GET", "/", ServeDocs},
-	Route{"Users", "GET", "/users", ListUsers},
+	Route{"List All Users", "GET", "/users", ListUsers},
+	Route{"Create User", "POST", "/users", CreateUser},
+	Route{"Delete User", "DELETE", "/users/{id}", DeleteUser},
+	Route{"Update User", "PUT", "/users/{id}", UpdateUser},
+	Route{"Get User", "GET", "/users/{id}", GetUser},
 }

@@ -1,16 +1,24 @@
 version: '2'
 
 services:
-  http-server:
-    build: .
-    image: alecholmez/http-server:latest
-    depends_on:
-      - mongo
-    command: /bin/sh -c "/go/bin/govendor sync; cd h2tp && go build -o /go/bin/main && /go/bin/main"
-    expose:
-      - 6060
-    ports:
-      - "6060:6060"
 
-  mongo:
-    image: mongo:latest
+    # http-server uses mongo as db
+    mongo:
+        image: mongo:latest
+
+    mongo-seeder:
+        build: ./mongo-seed
+        links:
+            - mongo
+
+    # actual http-server image
+    http-server:
+        build: .
+        image: alecholmez/http-server:latest
+        depends_on:
+            - mongo
+        command: /bin/sh -c "/go/bin/govendor sync; cd h2tp && go build -o /go/bin/main && /go/bin/main"
+        expose:
+            - 6060
+        ports:
+            - "6060:6060"

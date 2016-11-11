@@ -2,9 +2,11 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"net/http"
 	"time"
+
+	"github.com/alecholmez/http-server/config"
 
 	mgo "gopkg.in/mgo.v2"
 )
@@ -13,6 +15,7 @@ import (
 type Adapter func(http.Handler) http.Handler
 
 // Adapt ...
+// Wraps each handler with the middleware provided
 func Adapt(h http.Handler, adapters ...Adapter) http.Handler {
 	for _, adapter := range adapters {
 		h = adapter(h)
@@ -24,30 +27,56 @@ type key int
 
 const (
 	mongoSessKey key = iota
+	confKey      key = iota
 )
 
 // Log ...
 func Log(route Route) Adapter {
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			const layout = "Jan 2, 2006 at 3:04:05 PM (MST)"
-
-			time := time.Now().Format(layout)
-			fmt.Printf("%s: %s  -  %s\n", time, route.Method, route.Pattern)
+			start := time.Now()
 
 			h.ServeHTTP(w, r)
+
+			log.Printf(
+				"%s\t%s\t%s\t%s",
+				route.Method,
+				route.Pattern,
+				route.Name,
+				time.Since(start),
+			)
 		})
 	}
 }
 
 // WithMongo ...
+// Copies the mongo session passed to it
+// and sticks in the context in the Request.
+// This allows for every handler to access the mongo session
 func WithMongo(sess *mgo.Session) Adapter {
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+			// pull a mongo connection from the pool
 			sessCopy := sess.Copy()
 			defer sess.Copy()
 
-			ctx := context.WithValue(r.Context(), mongoSessKey, sessCopy)
+			ctx := r.Context()
+			ctx = context.WithValue(r.Context(), mongoSessKey, sessCopy)
+			r = r.WithContext(ctx)
+			h.ServeHTTP(w, r)
+		})
+	}
+}
+
+// WithConf ...
+// Copies the configuration object around
+// to all middleware for ease of access to global variables
+func WithConf(c config.Config) Adapter {
+	return func(h http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ctx := r.Context()
+			ctx = context.WithValue(r.Context(), confKey, c)
 			r = r.WithContext(ctx)
 			h.ServeHTTP(w, r)
 		})
@@ -55,6 +84,7 @@ func WithMongo(sess *mgo.Session) Adapter {
 }
 
 // GetMongo ...
+// Helper function for pulling the mongo session out of the request context
 func GetMongo(ctx context.Context) *mgo.Session {
 	sess, ok := ctx.Value(mongoSessKey).(*mgo.Session)
 	if !ok {
@@ -62,4 +92,14 @@ func GetMongo(ctx context.Context) *mgo.Session {
 	}
 
 	return sess
+}
+
+// GetConf ...
+func GetConf(ctx context.Context) config.Config {
+	conf, ok := ctx.Value(confKey).(config.Config)
+	if !ok {
+		panic("No configuration in context")
+	}
+
+	return conf
 }

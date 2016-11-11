@@ -5,5 +5,9 @@ oauth = false
 
 # mongo
 [database]
-host = "mongo"
+host = "localhost"
 port = 27017
+
+# api documentation
+[docs]
+url = "docs/index.html"
