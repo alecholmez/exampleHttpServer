@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/alecholmez/testHttpServer/config"
+	"github.com/alecholmez/http-server/config"
 	"github.com/spf13/viper"
 )
 
@@ -13,7 +13,7 @@ func main() {
 	config.NewConfig(".", "config")
 	p := viper.GetInt("server.port")
 	port := fmt.Sprintf(":%d", p)
-	if port == "" {
+	if port == ":0" {
 		port = ":6060"
 	}
 

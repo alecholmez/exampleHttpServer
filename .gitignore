@@ -2,4 +2,3 @@
 dump.rdb
 vendor/*
 !vendor/vendor.json
-h2tp

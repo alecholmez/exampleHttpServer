@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	"github.com/alecholmez/testHttpServer/server"
+	"github.com/alecholmez/http-server/server"
 )
 
 // Route ...

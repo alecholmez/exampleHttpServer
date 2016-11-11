@@ -19,8 +19,8 @@ RUN git clone https://github.com/facebook/watchman.git && \
 
 RUN go get -u github.com/kardianos/govendor
 
-WORKDIR /go/src/github.com/alecholmez/testHttpServer
-COPY . /go/src/github.com/alecholmez/testHttpServer
+WORKDIR /go/src/github.com/alecholmez/http-server
+COPY . /go/src/github.com/alecholmez/http-server
 
 CMD echo "Vendoring..." && \
     git config --global url."git@github.com:".insteadOf "https://github.com/" && \
