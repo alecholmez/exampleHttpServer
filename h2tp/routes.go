@@ -1,10 +1,6 @@
 package main
 
-import (
-	"net/http"
-
-	"github.com/alecholmez/http-server/server"
-)
+import "net/http"
 
 // Route ...
 type Route struct {
@@ -18,11 +14,8 @@ type Route struct {
 // A wrapper for holding many routes
 type Routes []Route
 
+// RTS ...
 var routes = Routes{
-	Route{
-		"Docs",
-		"GET",
-		"/",
-		server.ServeDocs,
-	},
+	Route{"Docs", "GET", "/", ServeDocs},
+	Route{"Users", "GET", "/users", ListUsers},
 }

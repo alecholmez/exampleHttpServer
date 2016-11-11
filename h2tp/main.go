@@ -16,7 +16,7 @@ func main() {
 		port = ":6060"
 	}
 
-	NewRouter(routes)
+	NewStack(routes, c)
 
 	log.Printf("Server is locally listening on port %s\n", port)
 	log.Fatal(http.ListenAndServe(port, nil))
