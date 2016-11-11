@@ -64,7 +64,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 		User bson.M `json:"user"`
 	}
 
-	err := col.Find(bson.M{"_id": "_id"}).One(&result.User)
+	err := col.Find(bson.M{"_id": id}).One(&result.User)
 	if err != nil {
 		log.Println(err)
 	}
