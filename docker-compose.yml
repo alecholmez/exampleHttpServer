@@ -6,9 +6,7 @@ services:
     image: alecholmez/http-server:latest
     depends_on:
       - mongo
-    volumes:
-      - .:/go/src/github.com/alecholmez/testHttpServer
-    command: /bin/sh -c "/go/bin/govendor sync; go build -o /go/bin/main && /go/bin/main"
+    command: /bin/sh -c "/go/bin/govendor sync; go build -o /go/bin/h2tp /h2tp && /go/bin/ht2p"
     expose:
       - 6060
     ports:

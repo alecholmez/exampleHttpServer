@@ -1,6 +1,10 @@
 package main
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/alecholmez/testHttpServer/server"
+)
 
 // Route ...
 type Route struct {
@@ -19,6 +23,6 @@ var routes = Routes{
 		"Docs",
 		"GET",
 		"/",
-		ServeDocs,
+		server.ServeDocs,
 	},
 }
