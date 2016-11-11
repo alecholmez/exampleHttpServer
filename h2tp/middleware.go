@@ -59,7 +59,7 @@ func WithMongo(sess *mgo.Session) Adapter {
 
 			// pull a mongo connection from the pool
 			sessCopy := sess.Copy()
-			defer sess.Copy()
+			defer sessCopy.Close()
 
 			ctx := r.Context()
 			ctx = context.WithValue(r.Context(), mongoSessKey, sessCopy)
@@ -75,6 +75,8 @@ func WithMongo(sess *mgo.Session) Adapter {
 func WithConf(c config.Config) Adapter {
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+			// Copy the config object to the request context
 			ctx := r.Context()
 			ctx = context.WithValue(r.Context(), confKey, c)
 			r = r.WithContext(ctx)

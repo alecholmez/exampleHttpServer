@@ -17,25 +17,43 @@ Retrieves all crews from the database
 
 + Response 200 (application/json)
 
-        {
-            "users": [
-                {
-                    "name": "Alec Holmes",
-                    "email": "alecholmez@me.com",
-                    "age": "19"
-                },
-                {
-                    "name": "Other Person",
-                    "email": "testing@gmail.com",
-                    "age": "24"
-                },
-                {
-                    "name": "Test Person",
-                    "email": "test.person@other.com",
-                    "age": "57"
-                }
-            ]
-        }
+        [
+          {
+            "_id": "5825d0abd65d88006988d33c",
+            "age": 19,
+            "createdAt": "2016-11-11T14:07:39.522Z",
+            "email": "alecholmez@me.com",
+            "name": "Alec Holmes"
+          },
+          {
+            "_id": "5825d0cdd65d88006988d33d",
+            "age": 19,
+            "createdAt": "2016-11-11T14:08:13.874Z",
+            "email": "alecholmez@me.com",
+            "name": "Alec Holmes"
+          },
+          {
+            "_id": "5825d0ced65d88006988d33e",
+            "age": 19,
+            "createdAt": "2016-11-11T14:08:14.465Z",
+            "email": "alecholmez@me.com",
+            "name": "Alec Holmes"
+          },
+          {
+            "_id": "5825d0cfd65d88006988d33f",
+            "age": 19,
+            "createdAt": "2016-11-11T14:08:15.072Z",
+            "email": "alecholmez@me.com",
+            "name": "Alec Holmes"
+          },
+          {
+            "_id": "5825d0d0d65d88006988d340",
+            "age": 19,
+            "createdAt": "2016-11-11T14:08:16.205Z",
+            "email": "alecholmez@me.com",
+            "name": "Alec Holmes"
+          }
+        ]
 
 + Response 404 (application/json)
 
@@ -46,9 +64,21 @@ Creates a user in the database
 
 + Request (application/json)
 
+        {
+            "name": "Alec Holmes",
+            "email": "alecholmez@me.com",
+            "age": 19
+        }
 
 + Response 200 (application/json)
 
+        {
+          "_id": "5825d0d0d65d88006988d340",
+          "age": 19,
+          "createdAt": "2016-11-11T14:08:16.205Z",
+          "email": "alecholmez@me.com",
+          "name": "Alec Holmes"
+        }
 
 + Response 400 (application/json)
 
@@ -64,6 +94,13 @@ Retrieves a crew from the database
 
 + Response 200 (application/json)
 
+        {
+          "_id": "5825d0d0d65d88006988d340",
+          "age": 19,
+          "createdAt": "2016-11-11T14:08:16.205Z",
+          "email": "alecholmez@me.com",
+          "name": "Alec Holmes"
+        }
 
 + Response 404 (application/json)
 
@@ -74,7 +111,6 @@ Retrieves a crew from the database
 
 + Response 200 (application/json)
 
-
 + Response 404 (application/json)
 
         user not found
@@ -82,8 +118,21 @@ Retrieves a crew from the database
 ### Update A User [PUT]
 Retrieves a crew from the database
 
++ Request (application/json)
+
+        {
+            "name": "Alec Holmez"
+        }
+
 + Response 200 (application/json)
 
+        {
+          "_id": "5825d0d0d65d88006988d340",
+          "age": 19,
+          "createdAt": "2016-11-11T14:08:16.205Z",
+          "email": "alecholmez@me.com",
+          "name": "Alec Holmez"
+        }
 
 + Response 404 (application/json)
 

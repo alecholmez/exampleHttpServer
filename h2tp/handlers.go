@@ -31,7 +31,6 @@ func ServeDocs(w http.ResponseWriter, r *http.Request) {
 // ListUsers ...
 func ListUsers(w http.ResponseWriter, r *http.Request) {
 	sess := GetMongo(r.Context())
-	defer sess.Close()
 	col := sess.DB("users").C("users")
 
 	var result struct {
@@ -45,14 +44,12 @@ func ListUsers(w http.ResponseWriter, r *http.Request) {
 
 	// Write the create object to the response
 	// so the user can see what they created
-	code := config.WriteResponse(w, result.Users)
-	w.WriteHeader(code)
+	_ = config.WriteResponse(w, result.Users)
 }
 
 // GetUser ...
 func GetUser(w http.ResponseWriter, r *http.Request) {
 	sess := GetMongo(r.Context())
-	defer sess.Close()
 	col := sess.DB("users").C("users")
 
 	vars := mux.Vars(r)
@@ -69,14 +66,12 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 
 	// Write the create object to the response
 	// so the user can see what they created
-	code := config.WriteResponse(w, result.User)
-	w.WriteHeader(code)
+	_ = config.WriteResponse(w, result.User)
 }
 
 // CreateUser ...
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	sess := GetMongo(r.Context())
-	defer sess.Close()
 	col := sess.DB("users").C("users")
 
 	var user User
@@ -97,14 +92,12 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	// Write the create object to the response
 	// so the user can see what they created
-	code := config.WriteResponse(w, user)
-	w.WriteHeader(code)
+	_ = config.WriteResponse(w, user)
 }
 
 // UpdateUser ...
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	sess := GetMongo(r.Context())
-	defer sess.Close()
 	col := sess.DB("users").C("users")
 
 	vars := mux.Vars(r)
@@ -121,14 +114,12 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 
-	code := config.WriteResponse(w, user)
-	w.WriteHeader(code)
+	_ = config.WriteResponse(w, user)
 }
 
 // DeleteUser ...
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	sess := GetMongo(r.Context())
-	defer sess.Close()
 	col := sess.DB("users").C("users")
 
 	vars := mux.Vars(r)

@@ -18,7 +18,7 @@ To get the server up and running run:
 docker-compose up
 ```
 
-### Alternative Without Docker
+### Alternatively Without Docker
 
 To run the server without docker and seed data you will need to make the following change:
 
