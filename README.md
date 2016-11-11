@@ -15,6 +15,5 @@ The point of this project is to demonstrate how simple it is to create a robust,
 
 To get the server up and running run:
 ```bash
-./build
 docker-compose up
 ```
