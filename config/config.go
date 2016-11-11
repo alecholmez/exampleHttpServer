@@ -1,9 +1,14 @@
 package config
 
 import (
+	"crypto/sha1"
+	"encoding/hex"
 	"encoding/json"
 	"log"
+	"math/rand"
 	"net/http"
+	"strconv"
+	"time"
 
 	mgo "gopkg.in/mgo.v2"
 
@@ -97,4 +102,19 @@ func WriteResponse(w http.ResponseWriter, value interface{}) int {
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(bytes)
 	return http.StatusOK
+}
+
+// GenID ...
+func GenID() string {
+	// Use the current timestamp as a seed for the random number genereator
+	source := rand.NewSource(time.Now().UnixNano())
+	// Create a string as the ID
+	s := strconv.Itoa(rand.New(source).Int())
+
+	//SHA1 hash generation
+	hasher := sha1.New()
+	hasher.Write([]byte(s))
+	hash := hex.EncodeToString(hasher.Sum(nil))
+
+	return hash
 }

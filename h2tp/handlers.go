@@ -13,11 +13,11 @@ import (
 
 // User ..
 type User struct {
-	Name      string        `json:"name" bson:"name"`
-	Email     string        `json:"email" bson:"email"`
-	Age       int           `json:"age" bson:"age"`
-	ID        bson.ObjectId `json:"_id" bson:"_id"`
-	CreatedAt time.Time     `json:"createdAt" bson:"createdAt"`
+	Name      string    `json:"name" bson:"name"`
+	Email     string    `json:"email" bson:"email"`
+	Age       int       `json:"age" bson:"age"`
+	ID        string    `json:"_id" bson:"_id"`
+	CreatedAt time.Time `json:"createdAt" bson:"createdAt"`
 }
 
 // ServeDocs ...
@@ -55,11 +55,16 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
 
+	if id == "" {
+		log.Println("ID was empty")
+		return
+	}
+
 	var result struct {
 		User bson.M `json:"user"`
 	}
 
-	err := col.FindId(bson.ObjectIdHex(id)).All(&result.User)
+	err := col.Find(bson.M{"_id": "_id"}).One(&result.User)
 	if err != nil {
 		log.Println(err)
 	}
@@ -81,7 +86,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Populate necessary data
-	user.ID = bson.NewObjectId()
+	user.ID = config.GenID()
 	user.CreatedAt = time.Now()
 
 	// Insert the object into mongo
@@ -103,13 +108,20 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
 
+	if id == "" {
+		log.Println("ID was empty")
+		return
+	}
+
 	var user User
 	if ok := config.ReadRequest(w, r, &user); !ok {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	err := col.UpdateId(bson.ObjectIdHex(id), user)
+	selected := bson.M{"_id": id}
+	updated := bson.M{"$set": user}
+	err := col.Update(selected, updated)
 	if err != nil {
 		log.Println(err)
 	}
@@ -124,6 +136,11 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	id := vars["id"]
+
+	if id == "" {
+		log.Println("ID was empty")
+		return
+	}
 
 	err := col.Remove(bson.M{"_id": id})
 	if err != nil {
