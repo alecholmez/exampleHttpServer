@@ -1,9 +1,9 @@
 # http server
 [server]
 port = 6060
-host = "localhost"
 oauth = false
 
 # mongo
 [database]
-mongoConnString = "mongo:27017"
+host = "mongo"
+port = 27017

@@ -6,13 +6,12 @@ import (
 	"net/http"
 
 	"github.com/alecholmez/http-server/config"
-	"github.com/spf13/viper"
 )
 
 func main() {
-	config.NewConfig(".", "config")
-	p := viper.GetInt("server.port")
-	port := fmt.Sprintf(":%d", p)
+	c := config.NewConfig("../config.toml")
+
+	port := fmt.Sprintf(":%d", c.Server.Port)
 	if port == ":0" {
 		port = ":6060"
 	}
