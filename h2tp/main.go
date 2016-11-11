@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	c := config.NewConfig("config.toml")
+	c := config.NewConfig("../config.toml")
 
 	port := fmt.Sprintf(":%d", c.Server.Port)
 	if port == ":0" {
