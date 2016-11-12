@@ -40,6 +40,7 @@ type Docs struct {
 }
 
 // NewConfig ...
+// Parses the config file using a 3rd party toml parser
 func NewConfig(dir string) Config {
 	var conf Config
 
@@ -105,6 +106,7 @@ func WriteResponse(w http.ResponseWriter, value interface{}) int {
 }
 
 // GenID ...
+// Creates a random hash using the current system time in nano seconds as the seed
 func GenID() string {
 	// Use the current timestamp as a seed for the random number genereator
 	source := rand.NewSource(time.Now().UnixNano())

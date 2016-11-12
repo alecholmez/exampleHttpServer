@@ -12,6 +12,7 @@ import (
 )
 
 // Adapter ...
+// Adapter is a wrapper handler
 type Adapter func(http.Handler) http.Handler
 
 // Adapt ...
@@ -31,6 +32,7 @@ const (
 )
 
 // Log ...
+// A home-made logger to log the route calls to standard output
 func Log(route Route) Adapter {
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -97,6 +99,7 @@ func GetMongo(ctx context.Context) *mgo.Session {
 }
 
 // GetConf ...
+// Retrieves a config object from the context in the request
 func GetConf(ctx context.Context) config.Config {
 	conf, ok := ctx.Value(confKey).(config.Config)
 	if !ok {
