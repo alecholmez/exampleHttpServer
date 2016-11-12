@@ -5,12 +5,7 @@ services:
     # http-server uses mongo as db
     mongo:
         image: mongo:latest
-
-    mongo-seeder:
-        build: ./mongo-seed
-        links:
-            - mongo
-
+        
     # actual http-server image
     http-server:
         build: .
