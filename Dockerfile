@@ -29,3 +29,4 @@ CMD echo "Vendoring..." && \
 #    ./autobuild.sh mongo:27017
 
 EXPOSE 6060
+EXPOSE 9000

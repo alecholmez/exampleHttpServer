@@ -31,6 +31,11 @@ func ServeDocs(w http.ResponseWriter, r *http.Request) {
 
 // ListUsers ...
 func ListUsers(w http.ResponseWriter, r *http.Request) {
+	// Setup metrics
+	ctx := r.Context()
+	mon := GetScope(ctx)
+	defer mon.Task()(&ctx)(nil)
+
 	// Extract the mongo session from the context in the request
 	sess := GetMongo(r.Context())
 	col := sess.DB("users").C("users")
@@ -52,6 +57,11 @@ func ListUsers(w http.ResponseWriter, r *http.Request) {
 
 // GetUser ...
 func GetUser(w http.ResponseWriter, r *http.Request) {
+	// Setup metrics
+	ctx := r.Context()
+	mon := GetScope(ctx)
+	defer mon.Task()(&ctx)(nil)
+
 	// Extract the mongo session from the context in the request
 	sess := GetMongo(r.Context())
 	col := sess.DB("users").C("users")
@@ -84,6 +94,11 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 
 // CreateUser ...
 func CreateUser(w http.ResponseWriter, r *http.Request) {
+	// Setup metrics
+	ctx := r.Context()
+	mon := GetScope(ctx)
+	defer mon.Task()(&ctx)(nil)
+
 	// Extract the mongo session from the context in the request
 	sess := GetMongo(r.Context())
 	col := sess.DB("users").C("users")
@@ -111,6 +126,11 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 // UpdateUser ...
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
+	// Setup metrics
+	ctx := r.Context()
+	mon := GetScope(ctx)
+	defer mon.Task()(&ctx)(nil)
+
 	// Extract the mongo session from the context in the request
 	sess := GetMongo(r.Context())
 	col := sess.DB("users").C("users")
@@ -146,6 +166,11 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 // DeleteUser ...
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
+	// Setup metrics
+	ctx := r.Context()
+	mon := GetScope(ctx)
+	defer mon.Task()(&ctx)(nil)
+
 	// Extract the mongo session from the context in the request
 	sess := GetMongo(r.Context())
 	col := sess.DB("users").C("users")

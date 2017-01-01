@@ -33,6 +33,7 @@ func NewStack(routes Routes, c config.Config) *mux.Router {
 					Log(route),
 					WithMongo(sess),
 					WithConf(c),
+					WithMetrics(),
 				),
 			)
 	}

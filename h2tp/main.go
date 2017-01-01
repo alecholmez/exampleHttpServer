@@ -9,8 +9,12 @@ import (
 )
 
 func main() {
-	// Load in the config file
+	// Load in the config file and define the environment
 	c := config.NewConfig("../config.toml")
+
+	Setup()
+	Start("0.0.0.0", 9000)
+	RegisterZipkin("zipkin", 9411)
 
 	// Define the port
 	port := fmt.Sprintf(":%d", c.Server.Port)
