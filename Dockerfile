@@ -21,11 +21,11 @@ RUN go get -u github.com/kardianos/govendor
 
 WORKDIR /go/src/github.com/alecholmez/http-server
 COPY . /go/src/github.com/alecholmez/http-server
-
-CMD echo "Vendoring..." && \
-    git config --global url."git@github.com:".insteadOf "https://github.com/" && \
-    /go/bin/govendor sync && \
-    /go/bin/govendor generate +local
+# 
+# CMD echo "Vendoring..." && \
+#     git config --global url."git@github.com:".insteadOf "https://github.com/" && \
+#     /go/bin/govendor sync && \
+#     /go/bin/govendor generate +local
 #    ./autobuild.sh mongo:27017
 
 EXPOSE 6060

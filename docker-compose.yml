@@ -1,13 +1,57 @@
 version: '2'
 
 services:
+    storage:
+        image: openzipkin/zipkin-mysql:1.19.0
+        container_name: mysql
 
-    # zipkin tracing helper
+    # The zipkin process services the UI, and also exposes a POST endpoint that
+    # instrumentation can send trace data to. Scribe is enabled by default.
     zipkin:
-        image: openzipkin/zipkin:latest
+        image: openzipkin/zipkin:1.19.0
+        container_name: zipkin
+        # Environment settings are defined here https://github.com/openzipkin/zipkin/tree/1.19.0/zipkin-server#environment-variables
+        environment:
+            - STORAGE_TYPE=mysql
+            # Point the zipkin at the storage backend
+            - MYSQL_HOST=mysql
+            # Uncomment to disable scribe
+            # - SCRIBE_ENABLED=false
+            # Uncomment to enable self-tracing
+            # - SELF_TRACING_ENABLED=true
+            # Uncomment to enable debug logging
+            # - JAVA_OPTS=-Dlogging.level.zipkin=DEBUG
         ports:
-            - "9410:9410"
-            - "9411:9411"
+            # Listen port for the Scribe transport
+            - 9410:9410
+            # Port used for the Zipkin UI and HTTP Api
+            - 9411:9411
+        expose:
+            # Listen port for the Scribe transport
+            - 9410
+            # Port used for the Zipkin UI and HTTP Api
+            - 9411
+        depends_on:
+            - storage
+
+    # Adds a cron to process spans since midnight every hour, and all spans each day
+    # This data is served by http://192.168.99.100:8080/dependency
+    #
+    # For more details, see https://github.com/openzipkin/docker-zipkin-dependencies
+    dependencies:
+        image: openzipkin/zipkin-dependencies
+        container_name: dependencies
+        entrypoint: crond -f
+        environment:
+          - STORAGE_TYPE=mysql
+          - MYSQL_HOST=mysql
+          # Add the baked-in username and password for the zipkin-mysql image
+          - MYSQL_USER=zipkin
+          - MYSQL_PASS=zipkin
+          # Uncomment to adjust memory used by the dependencies job
+          # - JAVA_OPTS=-verbose:gc -Xms1G -Xmx1G
+        depends_on:
+          - storage
 
     # http-server uses mongo as db
     mongo:
@@ -18,9 +62,9 @@ services:
         build: .
         image: alecholmez/http-server:latest
         depends_on:
-            - mongo
             - zipkin
-        command: /bin/sh -c "/go/bin/govendor sync; cd h2tp && go build -o /go/bin/main && /go/bin/main"
+            - mongo
+        command: /bin/sh -c " cd h2tp && go build -o /go/bin/main && /go/bin/main"
         expose:
             - 6060
             - 9000

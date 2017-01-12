@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/alecholmez/http-server/config"
-	"github.com/fvbock/endless"
 
 	mgo "gopkg.in/mgo.v2"
 	zipkin "gopkg.in/spacemonkeygo/monkit-zipkin.v2"
@@ -18,12 +17,10 @@ import (
 	"gopkg.in/spacemonkeygo/monkit.v2/present"
 )
 
-// Adapter ...
 // Adapter is a wrapper handler
 type Adapter func(http.Handler) http.Handler
 
-// Adapt ...
-// Wraps each handler with the middleware provided
+// Adapt wraps each handler with the middleware provided
 func Adapt(h http.Handler, adapters ...Adapter) http.Handler {
 	for _, adapter := range adapters {
 		h = adapter(h)
@@ -39,8 +36,7 @@ const (
 	monkitTaskKey key = iota
 )
 
-// Log ...
-// A home-made logger to log the route calls to standard output
+// Log a home-made logger to log the route calls to standard output
 func Log(route Route) Adapter {
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -59,8 +55,7 @@ func Log(route Route) Adapter {
 	}
 }
 
-// WithMongo ...
-// Copies the mongo session passed to it
+// WithMongo copies the mongo session passed to it
 // and sticks in the context in the Request.
 // This allows for every handler to access the mongo session
 func WithMongo(sess *mgo.Session) Adapter {
@@ -82,8 +77,7 @@ func WithMongo(sess *mgo.Session) Adapter {
 // Create a environment scope for all the handlers to share
 var mon = monkit.Package()
 
-// WithMetrics ...
-// Adds metrics functionality to each individual http handler in a golang service
+// WithMetrics adds metrics functionality to each individual http handler in a golang service
 func WithMetrics() Adapter {
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -121,10 +115,7 @@ func Start(host string, port int) {
 	// Start the metrics server on a go routine (non-blocking async)
 	// Endless allows for 0-downtime updates/delpoyments
 	go func() {
-		err := endless.ListenAndServe(addr, present.HTTP(monkit.Default))
-		if err != nil {
-			panic("Couldn't start metrics server")
-		}
+		http.ListenAndServe(addr, present.HTTP(monkit.Default))
 	}()
 }
 
@@ -150,17 +141,7 @@ func RegisterZipkin(host string, port int) error {
 	return nil
 }
 
-// WithZipkin adds the zipkin trace headers into all the functions/handlers with a monkit task ...
-func WithZipkin() Adapter {
-	return func(h http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
-		})
-	}
-}
-
-// WithConf ...
-// Copies the configuration object around
+// WithConf Copies the configuration object around
 // to all middleware for ease of access to global variables
 func WithConf(c config.Config) Adapter {
 	return func(h http.Handler) http.Handler {
@@ -175,8 +156,7 @@ func WithConf(c config.Config) Adapter {
 	}
 }
 
-// GetMongo ...
-// Helper function for pulling the mongo session out of the request context
+// GetMongo is a helper function for pulling the mongo session out of the request context
 func GetMongo(ctx context.Context) *mgo.Session {
 	sess, ok := ctx.Value(mongoSessKey).(*mgo.Session)
 	if !ok {
@@ -186,8 +166,7 @@ func GetMongo(ctx context.Context) *mgo.Session {
 	return sess
 }
 
-// GetConf ...
-// Retrieves a config object from the context in the request
+// GetConf retrieves a config object from the context in the request
 func GetConf(ctx context.Context) config.Config {
 	conf, ok := ctx.Value(confKey).(config.Config)
 	if !ok {
