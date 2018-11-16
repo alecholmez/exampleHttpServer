@@ -39,8 +39,7 @@ type Docs struct {
 	URL string `toml:"url"`
 }
 
-// NewConfig ...
-// Parses the config file using a 3rd party toml parser
+// NewConfig parses the config file using a 3rd party toml parser
 func NewConfig(dir string) Config {
 	var conf Config
 
@@ -68,8 +67,7 @@ func NewConfig(dir string) Config {
 	return conf
 }
 
-// NewMongoSession ...
-// Creates a mongo session with a mongo instance
+// NewMongoSession creates a mongo session with a mongo instance
 // to pass around to the application as middleware
 func NewMongoSession(conn string) *mgo.Session {
 	sess, err := mgo.Dial(conn)
@@ -80,8 +78,7 @@ func NewMongoSession(conn string) *mgo.Session {
 	return sess
 }
 
-// ReadRequest ...
-// Reads the incoming request and decodes it into the given interface
+// ReadRequest reads the incoming request body and decodes it into the given interface
 func ReadRequest(w http.ResponseWriter, r *http.Request, value interface{}) (ok bool) {
 	err := json.NewDecoder(r.Body).Decode(value)
 	if err != nil {
@@ -92,8 +89,7 @@ func ReadRequest(w http.ResponseWriter, r *http.Request, value interface{}) (ok 
 	return true
 }
 
-// WriteResponse ...
-// Writes the given interface to the response in json form
+// WriteResponse writes the given interface to the response body in json form
 func WriteResponse(w http.ResponseWriter, value interface{}) int {
 	bytes, err := json.MarshalIndent(value, "", "    ")
 	if err != nil {
@@ -105,8 +101,7 @@ func WriteResponse(w http.ResponseWriter, value interface{}) int {
 	return http.StatusOK
 }
 
-// GenID ...
-// Creates a random hash using the current system time in nano seconds as the seed
+// GenID creates a random hash using the current system time in nano seconds as the seed
 func GenID() string {
 	// Use the current timestamp as a seed for the random number genereator
 	source := rand.NewSource(time.Now().UnixNano())

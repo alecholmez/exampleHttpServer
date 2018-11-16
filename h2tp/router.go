@@ -6,10 +6,10 @@ import (
 
 	"github.com/alecholmez/http-server/config"
 	"github.com/gorilla/mux"
+	zipkin "gopkg.in/spacemonkeygo/monkit-zipkin.v2"
 )
 
-// NewStack ...
-// A stack to wrap each http handler with the middleware provided
+// NewStack creates a middleware stack to wrap each http handler
 func NewStack(routes Routes, c config.Config) *mux.Router {
 
 	// Create the mongo session to pass to the middleware
@@ -29,11 +29,15 @@ func NewStack(routes Routes, c config.Config) *mux.Router {
 			Path(route.Pattern).
 			Name(route.Name).
 			Handler(
-				Adapt(http.Handler(handler),
-					Log(route),
-					WithMongo(sess),
-					WithConf(c),
-					WithMetrics(),
+				zipkin.ContextWrapper17(
+					zipkin.TraceHandlerFor17Context(
+						Adapt(http.Handler(handler),
+							Log(route),
+							WithMongo(sess),
+							WithConf(c),
+							WithMetrics(),
+						),
+					),
 				),
 			)
 	}

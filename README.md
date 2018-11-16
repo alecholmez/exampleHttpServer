@@ -10,6 +10,7 @@ The point of this project is to demonstrate how simple it is to create a robust,
 
 1. `Docker` (Recommended Docker For Mac)
 2. `go` We recommend go 1.7
+3. `golang/dep`
 
 ## Install
 
