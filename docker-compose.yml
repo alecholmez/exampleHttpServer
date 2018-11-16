@@ -56,7 +56,7 @@ services:
     # http-server uses mongo as db
     mongo:
         image: mongo:latest
-        
+
     # actual http-server image
     http-server:
         build: .
@@ -64,7 +64,6 @@ services:
         depends_on:
             - zipkin
             - mongo
-        command: /bin/sh -c " cd h2tp && go build -o /go/bin/main && /go/bin/main"
         expose:
             - 6060
             - 9000

@@ -1,5 +1,4 @@
 .DS_Store
 dump.rdb
-vendor/*
-!vendor/vendor.json
+vendor
 h2tp/h2tp

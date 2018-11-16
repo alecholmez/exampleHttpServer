@@ -9,8 +9,7 @@ import (
 	zipkin "gopkg.in/spacemonkeygo/monkit-zipkin.v2"
 )
 
-// NewStack ...
-// A stack to wrap each http handler with the middleware provided
+// NewStack creates a middleware stack to wrap each http handler
 func NewStack(routes Routes, c config.Config) *mux.Router {
 
 	// Create the mongo session to pass to the middleware

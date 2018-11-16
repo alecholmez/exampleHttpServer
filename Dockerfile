@@ -1,32 +1,34 @@
-FROM iron/go:dev
+# build stage
+FROM golang:1.11.2-alpine3.8 AS builder
 
 RUN apk update && \
-    apk add openssh gcc libc-dev cyrus-sasl-dev linux-headers python-dev automake autoconf inotify-tools py2-pip openssl-dev
+    apk add libressl-dev bash git ca-certificates curl
 
-RUN mkdir -p ~/.ssh && ssh-keyscan -H github.com >> ~/.ssh/known_hosts && chmod 644 ~/.ssh/known_hosts
+# establish a working directory
+WORKDIR /go/src/github.com/alecholmez/http-server/
+ADD . /go/src/github.com/alecholmez/http-server/
 
-RUN git clone https://github.com/facebook/watchman.git && \
-    cd watchman && \
-    git checkout tags/v4.7.0 && \
-    ./autogen.sh && \
-    ./configure && \
-    make && \
-    make install && \
-    cd .. && \
-    rm -rf watchman && \
-    pip install --upgrade setuptools && \
-    pip install pywatchman
+# vendor dependencies in the builder container
+RUN curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh && \
+    cd /go/src/github.com/alecholmez/http-server && \
+    dep ensure --vendor-only -v
 
-RUN go get -u github.com/kardianos/govendor
+# build our binary
+RUN cd h2tp && \
+    go build .
 
-WORKDIR /go/src/github.com/alecholmez/http-server
-COPY . /go/src/github.com/alecholmez/http-server
-# 
-# CMD echo "Vendoring..." && \
-#     git config --global url."git@github.com:".insteadOf "https://github.com/" && \
-#     /go/bin/govendor sync && \
-#     /go/bin/govendor generate +local
-#    ./autobuild.sh mongo:27017
+# final stage
+FROM alpine:3.8
+
+RUN apk update && \
+    apk add ca-certificates
+
+WORKDIR /app
+
+# Copy over the neccessary items from the builder container: binary, entrypoint script, and certs
+COPY --from=builder /go/src/github.com/alecholmez/http-server/h2tp/h2tp /app/
+
+CMD ./h2tp
 
 EXPOSE 6060
 EXPOSE 9000
